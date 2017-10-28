@@ -7,6 +7,8 @@ This app is going to give live notifications with your order status and with you
 #Users
 
 Admin - who can add new products and delete producta to the app (ingredients, recipes, block maybe customers)
+
 User - who can add an order or cancel it
+
 Employee - who can just remove order
 
