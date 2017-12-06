@@ -1,5 +1,8 @@
 package com.pfac.marcm.pizzafactory.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by marcm on 29/10/2017.
  */
@@ -7,13 +10,17 @@ package com.pfac.marcm.pizzafactory.model;
 public class Pizza {
     private String pizzaName;
     private String ingredients;
-    private String wight;
+    private String weight;
     private int price;
 
-    public Pizza(String pizzaName, String ingredients, String wight, int price) {
+
+    public Pizza() {
+    }
+
+    public Pizza(String pizzaName, String ingredients, String weight, int price) {
         this.pizzaName = pizzaName;
         this.ingredients = ingredients;
-        this.wight = wight;
+        this.weight = weight;
         this.price = price;
     }
 
@@ -33,12 +40,12 @@ public class Pizza {
         this.ingredients = ingredients;
     }
 
-    public String getWight() {
-        return wight;
+    public String getWeight() {
+        return weight;
     }
 
-    public void setWight(String wight) {
-        this.wight = wight;
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 
     public int getPrice() {
@@ -47,5 +54,25 @@ public class Pizza {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Pizza{" +
+                "pizzaName='" + pizzaName + '\'' +
+                ", ingredients='" + ingredients + '\'' +
+                ", weight='" + weight + '\'' +
+                ", price=" + price +
+                '}';
+    }
+
+    public Map<String,Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("pizzaName", pizzaName);
+        result.put("ingredients", ingredients);
+        result.put("weight", weight);
+        result.put("price", price);
+
+        return result;
     }
 }
