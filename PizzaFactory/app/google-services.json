@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "424755743693",
+    "firebase_url": "https://pizza-factory-mobile.firebaseio.com",
+    "project_id": "pizza-factory-mobile",
+    "storage_bucket": "pizza-factory-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424755743693:android:067482f74639bc58",
+        "android_client_info": {
+          "package_name": "com.pfac.marcm.pizzafactory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424755743693-ds830n4eja3vvj1ume0mmv9ddvd48n2i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pfac.marcm.pizzafactory",
+            "certificate_hash": "1be88b6a9a0ced7fc0c68d70c086bff777378c76"
+          }
+        },
+        {
+          "client_id": "424755743693-t2k9rua8uqcdt0k5vofpe0im8m5fp515.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsAUyt61VRHdPf4hxvlXzgKhm0kQL3qeU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424755743693-t2k9rua8uqcdt0k5vofpe0im8m5fp515.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
