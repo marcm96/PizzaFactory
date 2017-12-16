@@ -1,6 +1,8 @@
 package com.pfac.marcm.pizzafactory.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -13,12 +15,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.pfac.marcm.pizzafactory.R;
 import com.pfac.marcm.pizzafactory.model.Pizza;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -50,14 +54,34 @@ public class PizzaDetailsFragment extends Fragment {
         final EditText pizzaIngredients = view.findViewById(R.id.pizzaIngredientsEditText);
         final EditText pizzaWeight = view.findViewById(R.id.pizzaWeightEditText);
         final EditText pizzaPrice = view.findViewById(R.id.pizzaPriceEditText);
+        final EditText pizzaOrderTime = view.findViewById(R.id.timeOrderPizza);
 
         pizzaName.setText(pizza.getPizzaName());
         pizzaIngredients.setText(pizza.getIngredients());
         pizzaWeight.setText(pizza.getWeight());
         pizzaPrice.setText(String.valueOf(pizza.getPrice()));
 
-        Button saveButton = view.findViewById(R.id.saveButton);
+        pizzaOrderTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        pizzaOrderTime.setText( selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+            }
+        });
 
+
+        Button saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,6 +107,8 @@ public class PizzaDetailsFragment extends Fragment {
                 openGmail(getActivity(), new String[] {"test@test.ro"}, content);
             }
         });
+
+
     }
 
     public static void openGmail(Activity activity, String[] email, String content) {

@@ -1,13 +1,20 @@
 package com.pfac.marcm.pizzafactory.adapters;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.pfac.marcm.pizzafactory.MainActivity;
 import com.pfac.marcm.pizzafactory.R;
 import com.pfac.marcm.pizzafactory.model.Pizza;
 
@@ -33,7 +40,7 @@ public class PizzaListAdapter extends ArrayAdapter<Pizza> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = View.inflate(context, resource, null);
+        @SuppressLint("ViewHolder") View view = View.inflate(context, resource, null);
 
         TextView pizzaName = view.findViewById(R.id.pizzaName);
         TextView pizzaIngredients = view.findViewById(R.id.pizzaIngredients);
@@ -41,10 +48,35 @@ public class PizzaListAdapter extends ArrayAdapter<Pizza> {
         TextView pizzaPrice = view.findViewById(R.id.pizzaPrice);
 
         Pizza currentPizza = pizzaList.get(position);
+        final String postId = currentPizza.getId();
         pizzaName.setText(currentPizza.getPizzaName());
         pizzaIngredients.setText(currentPizza.getIngredients());
         pizzaWeight.setText(currentPizza.getWeight());
         pizzaPrice.setText(String.valueOf(currentPizza.getPrice()));
+
+        //delete Button
+        Button deleteItemButton = view.findViewById(R.id.removePizza);
+        deleteItemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Are you sure you want to delete this item?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("pizzas").child(postId);
+                                databaseReference.removeValue();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //
+                            }
+                        })
+                        .show();
+            }
+        });
 
         return view;
     }

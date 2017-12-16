@@ -24,7 +24,8 @@
         <EditText
             android:id="@+id/pizzaIngredientsEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="text" />
 
         <TextView
             android:layout_width="match_parent"
@@ -33,22 +34,40 @@
         <EditText
         android:id="@+id/pizzaWeightEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="text" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Price: "/>
+            android:text="@string/price"/>
         <EditText
             android:id="@+id/pizzaPriceEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="number" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/time_for_order"/>
+        <EditText
+            android:id="@+id/timeOrderPizza"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="time" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/additional_order_info"/>
         <EditText
             android:id="@+id/orderEditText"
-            android:layout_marginTop="50dp"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:inputType="text" />
+
     </LinearLayout>
 
 
@@ -60,8 +79,9 @@
         android:layout_alignParentStart="true"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:text="Place Order"
+        android:text="@string/place_order"
         android:textColor="@color/colorWhite"
+        android:layout_marginBottom="5dp"
         android:textStyle="bold" />
     <Button
         android:id="@+id/saveButton"

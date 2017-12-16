@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -29,16 +30,20 @@ import java.util.List;
 public class PizzaListFragment extends Fragment {
 
     static List<Pizza> pizzas;
-    final DatabaseReference pizzasDB = FirebaseDatabase.getInstance().getReference("pizzas");
+    DatabaseReference pizzasDB;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pizzasDB = FirebaseDatabase.getInstance().getReference("pizzas");
+        pizzasDB.keepSynced(true);
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        pizzas = new ArrayList<>();
         return inflater.inflate(R.layout.pizza_list_layout, container, false);
     }
 
@@ -46,16 +51,21 @@ public class PizzaListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //create and populate list
         ListView pizzaListView = view.findViewById(R.id.pizzaListView);
 
-        this.pizzas = new ArrayList<>();
         final PizzaListAdapter pizzaListAdapter = new PizzaListAdapter(getContext(), R.layout.pizza_list_item, pizzas);
 
+        //take values from DB
         pizzasDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                pizzas.clear();
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
                     Pizza pizza = ds.getValue(Pizza.class);
+                    if (pizza != null) {
+                        pizza.setId(ds.getKey());
+                    }
                     pizzas.add(pizza);
                 }
                 pizzaListAdapter.notifyDataSetChanged();
@@ -70,6 +80,7 @@ public class PizzaListFragment extends Fragment {
         pizzaListView.setAdapter(pizzaListAdapter);
         pizzaListView.setDividerHeight(0);
 
+        //set click on list item
         pizzaListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -85,6 +96,22 @@ public class PizzaListFragment extends Fragment {
                         .commit();
             }
         });
+
+        //get button and select event on it for add pizza
+        Button goToAddButton = view.findViewById(R.id.addPizza);
+
+        goToAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PizzaAddFragment pizzaAddFragment = new PizzaAddFragment();
+
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.mainFragment, pizzaAddFragment).addToBackStack(null)
+                        .commit();
+            }
+        });
+
+
     }
 
     public static List<Pizza> getPizzas() {

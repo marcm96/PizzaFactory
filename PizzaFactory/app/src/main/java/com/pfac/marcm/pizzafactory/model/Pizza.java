@@ -8,6 +8,7 @@ import java.util.Map;
  */
 
 public class Pizza {
+    private String id;
     private String pizzaName;
     private String ingredients;
     private String weight;
@@ -17,11 +18,20 @@ public class Pizza {
     public Pizza() {
     }
 
-    public Pizza(String pizzaName, String ingredients, String weight, int price) {
+    public Pizza(String id, String pizzaName, String ingredients, String weight, int price) {
+        this.id = id;
         this.pizzaName = pizzaName;
         this.ingredients = ingredients;
         this.weight = weight;
         this.price = price;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPizzaName() {
