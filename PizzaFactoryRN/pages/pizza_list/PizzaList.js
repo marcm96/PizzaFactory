@@ -1,5 +1,16 @@
 import React from 'react';
-import { View, ListView, StyleSheet, Button} from 'react-native';
+import {
+    View,
+    TouchableOpacity,
+    ListView,
+    StyleSheet,
+    Button,
+    AsyncStorage,
+    FlatList,
+    RefreshControl,
+    ScrollView,
+    Text
+} from 'react-native';
 import { data } from '../../demoData';
 import PizzaItem from "./PizzaItem";
 
@@ -9,38 +20,97 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 export default class PizzaList extends React.Component {
 
     static navigationOptions = {
-        title: 'Welcome'
+        title: 'Welcome',
+        header: null
     };
 
     constructor(props) {
         super(props);
+        // this.add();
+        this._onRefresh = this._onRefresh.bind(this);
         this.state = {
-            dataSource: ds.cloneWithRows(data),
+            refreshing: false,
+            newPizzas: [],
+            loading: true,
         };
     }
 
+    async add(){
+        AsyncStorage.setItem('@MyStore:key', JSON.stringify(data));
+    }
+
+    _onRefresh() {
+        this.setState({refreshing:true});
+        this.setState({refreshing:false});
+        this.retrieveContent();
+    }
+
+    retrieveContent() {
+        AsyncStorage.getItem('@MyStore:key').then((value) => {
+            this.setState({newPizzas: JSON.parse(value)});
+        }).catch((error) => {
+            console.log("Unable to retrieve the content" + error);
+        });
+    }
+
+    componentWillMount(){
+        this.getItems();
+    }
+
+    getItems(){
+        AsyncStorage.getItem('@MyStore:key').then((value) => {
+            this.setState({newPizzas: JSON.parse(value)});
+            this.setState({loading: false});
+        }).catch((error) => {
+            console.log("Unable to retrieve the content" + error);
+        });
+    }
+
+    returnData(){
+        console.log(this.state.newPizzas);
+        return this.state.newPizzas;
+    }
+
+
     render() {
         const { navigate } = this.props.navigation;
-        return (
-            <View>
 
-                <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={(rowData, sectionId, rowId) =>
-                    <View>
-                        <PizzaItem
-                            data = {rowData}
-                        />
-                        <Button
-                            onPress = {() => navigate('Details', {rowData: rowData})}
-                            title = "Details"
-                            color= "#841584"
-                        />
-                    </View>
-                    }
-                />
-            </View>
-        );
+        if (this.state.loading !== true){
+            return(
+                <View style={styles.container}>
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this._onRefresh.bind(this)}
+                            />
+                        }
+                        data = { this.returnData() }
+                        renderItem={
+                            ({item}) =>
+                                <ScrollView>
+                                    <View>
+                                        <Text  onPress={() => navigate('Details', {pizza: item.pizza, refresh: this._onRefresh})}>
+                                            {item.pizza.name}
+                                        </Text>
+                                    </View>
+                                </ScrollView>
+                        }
+                        extraData = {this.state.newPizzas}
+                    />
+
+                </View>
+
+            )
+        } else {
+            return(
+                <View>
+                    <Text> Loading </Text>
+                </View>
+            )
+        }
+
+
     }
 }
 

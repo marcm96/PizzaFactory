@@ -2,7 +2,6 @@ import React from 'react';
 import {TextInput, View, Text, Button, Linking} from 'react-native'
 
 let updateItem = function (params) {
-    console.log("Hello");
     params.dataSource[params.rowData.id] = {};
     params.dataSource[params.rowData.id] = {
         id: params.rowData.id,
@@ -22,7 +21,6 @@ export default class PizzaDetails extends React.Component {
     render() {
         const { params } = this.props.navigation.state;
         const { goBack } = this.props.navigation;
-        console.log(params);
         return(
             <View>
                 <Text>Pizza</Text>
