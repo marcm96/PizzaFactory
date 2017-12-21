@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,11 +20,18 @@ import android.widget.TimePicker;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.ValueDependentColor;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
+import com.jjoe64.graphview.series.BarGraphSeries;
+import com.jjoe64.graphview.series.DataPoint;
 import com.pfac.marcm.pizzafactory.R;
 import com.pfac.marcm.pizzafactory.model.Pizza;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by marcm on 29/10/2017.
@@ -31,6 +39,7 @@ import java.util.List;
 
 public class PizzaDetailsFragment extends Fragment {
     Pizza pizza;
+    Pizza[] pizzas;
     Integer position;
 
     @Nullable
@@ -41,6 +50,7 @@ public class PizzaDetailsFragment extends Fragment {
 
         if (bundle != null){
             position = bundle.getInt("position");
+            pizzas = PizzaListFragment.getPizzas().toArray(new Pizza[0]);
             pizza = PizzaListFragment.getPizzas().get(position);
         }
         return inflater.inflate(R.layout.pizza_item_details, container, false);
@@ -61,6 +71,8 @@ public class PizzaDetailsFragment extends Fragment {
         pizzaWeight.setText(pizza.getWeight());
         pizzaPrice.setText(String.valueOf(pizza.getPrice()));
 
+
+        //time picker item
         pizzaOrderTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,7 +92,11 @@ public class PizzaDetailsFragment extends Fragment {
             }
         });
 
+        //graph item
+        initGraph(view);
 
+
+        //save button
         Button saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +112,7 @@ public class PizzaDetailsFragment extends Fragment {
             }
         });
 
+        //place order button
         Button placeOrderButton = view.findViewById(R.id.placeOrderButton);
         final EditText editText = view.findViewById(R.id.orderEditText);
 
@@ -109,6 +126,54 @@ public class PizzaDetailsFragment extends Fragment {
         });
 
 
+    }
+
+    private void initGraph(View view) {
+
+        GraphView graph = (GraphView) view.findViewById(R.id.graph);
+
+        Map<Integer, Integer> nameMap = new HashMap<>();
+        for(Pizza p: pizzas){
+            Integer name = p.getPrice();
+            if (nameMap.containsKey(name)) {
+                int value = nameMap.get(name);
+                value++;
+                nameMap.put(name, value);
+            } else {
+                nameMap.put(name, 1);
+            }
+        }
+
+        int sizeMap = nameMap.keySet().size();
+        String[] horizontalLabels = new String[sizeMap];
+        DataPoint[] dataPoints = new DataPoint[sizeMap];
+
+        int i = 0;
+        for (Integer name : nameMap.keySet()){
+            dataPoints[i] = new DataPoint(i, nameMap.get(name).doubleValue());
+            horizontalLabels[i] = String.valueOf(name);
+            i++;
+        }
+
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+        staticLabelsFormatter.setHorizontalLabels(horizontalLabels);
+
+        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        BarGraphSeries<DataPoint> series = new BarGraphSeries<>(dataPoints);
+        graph.addSeries(series);
+
+        // styling
+        series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+            @Override
+            public int get(DataPoint data) {
+                return Color.rgb((int) data.getX() * 255 / 4, (int) Math.abs(data.getY() * 255 / 6), 100);
+            }
+        });
+
+        series.setSpacing(50);
+
+        // draw values on top
+        series.setDrawValuesOnTop(true);
     }
 
     public static void openGmail(Activity activity, String[] email, String content) {
