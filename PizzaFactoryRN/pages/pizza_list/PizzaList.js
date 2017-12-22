@@ -4,15 +4,14 @@ import {
     TouchableOpacity,
     ListView,
     StyleSheet,
-    Button,
     AsyncStorage,
     FlatList,
     RefreshControl,
     ScrollView,
-    Text
+    Text,
+    Alert
 } from 'react-native';
 import { data } from '../../demoData';
-import PizzaItem from "./PizzaItem";
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
@@ -37,6 +36,25 @@ export default class PizzaList extends React.Component {
 
     async add(){
         AsyncStorage.setItem('@MyStore:key', JSON.stringify(data));
+    }
+
+    async findByName(name) {
+        let response = await AsyncStorage.getItem('@MyStore:key');
+        let pizzas = JSON.parse(response);
+        var count = pizzas.length;
+        for(var i = 0; i < count ; i++) {
+            if(pizzas[i].pizza.name === name) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    async deletePizza(idx){
+        let response = await AsyncStorage.getItem('@MyStore:key');
+        let pizzas =  JSON.parse(response);
+        pizzas.splice(idx, 1);
+        AsyncStorage.setItem('@MyStore:key', JSON.stringify(pizzas));
     }
 
     _onRefresh() {
@@ -66,9 +84,26 @@ export default class PizzaList extends React.Component {
         });
     }
 
+
+
     returnData(){
-        console.log(this.state.newPizzas);
         return this.state.newPizzas;
+    }
+
+    showAlert(name){
+        Alert.alert('INFO','Are you sure you want to delete this item from the menu list?',
+            [
+                {text: 'Yes',
+                    onPress: async () =>{
+                        var idx = await this.findByName(name);
+                        await this.deletePizza(idx);
+                        this._onRefresh();
+                    }},
+                {text: 'No',
+                    onPress: () => console.log("Then selected item was not deleted!")}
+            ],
+            {cancelable: false}
+        )
     }
 
 
@@ -92,12 +127,28 @@ export default class PizzaList extends React.Component {
                                     <View>
                                         <Text  onPress={() => navigate('Details', {pizza: item.pizza, refresh: this._onRefresh})}>
                                             {item.pizza.name}
+                                            {item.pizza.description}
+                                            {item.pizza.weight}
+                                            {item.pizza.price}
                                         </Text>
+                                        <View>
+                                            <TouchableOpacity
+                                                onPress={ () => this.showAlert(item.pizza.name)}>
+                                                <Text> X </Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </ScrollView>
                         }
                         extraData = {this.state.newPizzas}
                     />
+
+                    <View>
+                        <TouchableOpacity onPress={() =>
+                            navigate('AddPizza',{refresh: this._onRefresh})}>
+                            <Text > Add pizza </Text>
+                        </TouchableOpacity>
+                    </View>
 
                 </View>
 
