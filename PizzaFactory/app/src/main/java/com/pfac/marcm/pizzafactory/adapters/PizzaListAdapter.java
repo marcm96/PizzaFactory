@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -14,11 +15,11 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.pfac.marcm.pizzafactory.MainActivity;
 import com.pfac.marcm.pizzafactory.R;
 import com.pfac.marcm.pizzafactory.model.Pizza;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by marcm on 29/10/2017.
@@ -46,6 +47,17 @@ public class PizzaListAdapter extends ArrayAdapter<Pizza> {
         TextView pizzaIngredients = view.findViewById(R.id.pizzaIngredients);
         TextView pizzaWeight = view.findViewById(R.id.pizzaWeight);
         TextView pizzaPrice = view.findViewById(R.id.pizzaPrice);
+        Button deleteItemButton = view.findViewById(R.id.removePizza);
+
+        String role;
+        SharedPreferences sharedPreferences = context.getSharedPreferences("user_info", Context.MODE_PRIVATE);
+        role = sharedPreferences.getString("role", null);
+
+        if (Objects.equals(role, "guest")){
+            deleteItemButton.setVisibility(View.GONE);
+        } else {
+            deleteItemButton.setVisibility(View.VISIBLE);
+        }
 
         Pizza currentPizza = pizzaList.get(position);
         final String postId = currentPizza.getId();
@@ -55,7 +67,6 @@ public class PizzaListAdapter extends ArrayAdapter<Pizza> {
         pizzaPrice.setText(String.valueOf(currentPizza.getPrice()));
 
         //delete Button
-        Button deleteItemButton = view.findViewById(R.id.removePizza);
         deleteItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

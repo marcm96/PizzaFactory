@@ -3,7 +3,9 @@ package com.pfac.marcm.pizzafactory.fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
@@ -32,6 +34,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by marcm on 29/10/2017.
@@ -41,6 +44,9 @@ public class PizzaDetailsFragment extends Fragment {
     Pizza pizza;
     Pizza[] pizzas;
     Integer position;
+
+    String role;
+    Button saveButton;
 
     @Nullable
     @Override
@@ -53,7 +59,18 @@ public class PizzaDetailsFragment extends Fragment {
             pizzas = PizzaListFragment.getPizzas().toArray(new Pizza[0]);
             pizza = PizzaListFragment.getPizzas().get(position);
         }
-        return inflater.inflate(R.layout.pizza_item_details, container, false);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user_info", Context.MODE_PRIVATE);
+        role = sharedPreferences.getString("role", null);
+        View view = inflater.inflate(R.layout.pizza_item_details, container, false);
+
+        saveButton = view.findViewById(R.id.saveButton);
+        if (Objects.equals(role, "guest")){
+            saveButton.setVisibility(View.GONE);
+        } else {
+            saveButton.setVisibility(View.VISIBLE);
+        }
+        return view;
     }
 
     @Override
@@ -97,7 +114,6 @@ public class PizzaDetailsFragment extends Fragment {
 
 
         //save button
-        Button saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,0 +1,21 @@
+package com.pfac.marcm.pizzafactory.services;
+
+import android.util.Log;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
+/**
+ * Created by marcm on 07/01/2018.
+ */
+
+public class MyFirebaseInstanceIdServie extends FirebaseInstanceIdService {
+    private static final String REG_TOKEN = "REG_TOKEN";
+
+    @Override
+    public void onTokenRefresh() {
+
+        String recent_tokens = FirebaseInstanceId.getInstance().getToken();
+        Log.d(REG_TOKEN, recent_tokens);
+    }
+}

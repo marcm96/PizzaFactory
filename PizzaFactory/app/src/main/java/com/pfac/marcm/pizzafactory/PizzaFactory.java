@@ -15,6 +15,5 @@ public class PizzaFactory extends Application {
         super.onCreate();
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
     }
 }
